@@ -1,19 +1,23 @@
-import { create}
+import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 
-
-var axios = require("axios").default;
-
-var options = {
-  method: 'GET',
-  url: 'https://coinranking1.p.rapidapi.com/exchanges',
-  headers: {
+const cryptoApiHeaders = {
     'x-rapidapi-host': 'coinranking1.p.rapidapi.com',
     'x-rapidapi-key': '3b5990d802mshfb88fd388819a06p1ae24ajsn588bcafbd07c'
-  }
-};
+}
 
-axios.request(options).then(function (response) {
-	console.log(response.data);
-}).catch(function (error) {
-	console.error(error);
+const baseUrl = 'https://coinranking1.p.rapidapi.com';
+const createRequest = (url) => ({ url, headers: cryptoApiHeaders})
+
+// Api to get info from RapidApi
+export const cryptoApi = createApi({
+    reducerPath: 'cryptoApi',
+    baseQuery: fetchBaseQuery({ baseUrl }),
+    endpoints: (builder) => ({
+        getCryptos: builder.query({
+            query: () => createRequest('/coins')
+        })
+    })
 });
+
+// creates hook to pull instantly to get all data for quey thanks to redux
+export const { useGetCryptosQuery } = cryptoApi;
